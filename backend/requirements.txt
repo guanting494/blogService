@@ -1,0 +1,24 @@
+# Core Django packages
+django>=4.2
+djangorestframework
+
+# OAuth & Authentication
+django-allauth
+dj-rest-auth
+social-auth-app-django
+
+
+# PostgreSQL
+psycopg2-binary
+
+# Config & Environment
+python-decouple
+
+# Markdown support
+markdown
+
+# CORS support
+django-cors-headers
+
+# Filtering for DRF
+django-filter
