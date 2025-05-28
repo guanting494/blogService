@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { loginUser, signupUser, logoutUser, githubSocialLogin } from '@/app/lib/api';
+import { loginUser, signupUser, logoutUser, githubSocialLogin } from '@/app/lib/userApi';
 interface AuthState {
   authToken: string | null;
   isAuthenticated: boolean;
