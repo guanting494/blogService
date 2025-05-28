@@ -71,15 +71,16 @@ ACCOUNT_LOGIN_METHODS = {'username'}
 ACCOUNT_UNIQUE_EMAIL = True # 邮箱唯一
 # * means required field
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+ACCOUNT_ADAPTER = 'allauth.account.adapter.DefaultAccountAdapter'
 
 # OAuth settings
-SOCIALACCOUNT_ADAPTER = 'users.adapters.MySocialAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'allauth.socialaccount.adapter.DefaultSocialAccountAdapter'
 
 
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'dj_rest_auth.registration.serializers.RegisterSerializer',
 }
-ACCOUNT_ADAPTER = 'users.adapters.MySocialAccountAdapter'
+
 SOCIALACCOUNT_STORE_TOKENS = True
 LOGIN_REDIRECT_URL = "http://localhost:3000/" # 默认登录后跳转
 ACCOUNT_LOGOUT_REDIRECT_URL = "http://localhost:3000/" # 默认登出后跳转

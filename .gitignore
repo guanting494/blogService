@@ -1,10 +1,11 @@
-# デフォルトの無視対象ファイル
+# default ignore file for a project
 /shelf/
 /.idea/workspace.xml
-# エディターベースの HTTP クライアントリクエスト
+
+# HTTP requests stored in the project
 /httpRequests/
-# 環境に依存する Maven ホームディレクトリのパス
-/mavenHomeManager.xml
+
+/mavenHomeManager.xml 
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
