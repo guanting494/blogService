@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { loginUser, signupUser, logoutUser, githubSocialLogin } from '@/app/lib/userApi';
 interface AuthState {
   authToken: string | null;
@@ -21,6 +22,7 @@ export const useAuth = (): AuthState => {
   const [username, setUsername] = useState<string | null>(null);
   const [message, setMessage] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const router = useRouter();
 
   // use useCallback to avoid recreating functions on every render
   const clearMessages = useCallback(() => {
@@ -53,7 +55,7 @@ export const useAuth = (): AuthState => {
         localStorage.setItem('authUsername', user);
         setIsAuthenticated(true);
         setUsername(user);
-        setMessage('login successful!');
+        router.push('/'); // Redirect to the main page after login
       } else {
         setError('login failed! unauthorized');
       }
@@ -61,7 +63,7 @@ export const useAuth = (): AuthState => {
       setError(`login faild: ${err.message || 'unknown error'}`);
       console.error('Login error:', err);
     }
-  }, [clearMessages]);
+  }, [clearMessages, router]);
 
   const loginWithGithub = useCallback(async (code: string) => {
     clearMessages();

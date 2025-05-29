@@ -1,8 +1,8 @@
 'use client';
 import LoginForm from '@/app/components/auth/LoginForm';
-import AuthStatus from '@/app/components/auth/AuthStatus';
 import { useAuth } from '@/app/hooks/useAuth';
 import styles from '@/app/components/auth/auth.module.css';
+import Link from 'next/link';
 
 
 export default function LoginPage() {
@@ -22,18 +22,23 @@ export default function LoginPage() {
         {error && <p className="error">{error}</p>}
 
         {isAuthenticated ? (
-          <AuthStatus />
+          <div className="flex flex-col items-center">
+            <p className="text-lg font-semibold text-green-600 mb-4">You are already logged in!</p>
+            <Link href="/" className="text-blue-500 hover:underline text-lg">
+              Go to Homepage
+            </Link>
+          </div>
         ) : (
-        <div className={styles.loginBox}>
+          <div className={styles.loginBox}>
             <LoginForm />
             <button
               onClick={handleGithubLogin}
               className={styles.githubButton + ' ' + styles.fullWidth}
             >
-            Login with GitHub
-          </button>
-        </div>
-      )}
+              Login with GitHub
+            </button>
+          </div>
+        )}
 
       </main>
     </div>
