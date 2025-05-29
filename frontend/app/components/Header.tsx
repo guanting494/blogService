@@ -5,13 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/hooks/useAuth';
 
 
-
-
-
 export default function Header() {
   const router = useRouter();
   const { isAuthenticated, username, logout } = useAuth();
-  console.log('Header rendered:', { isAuthenticated, username });
   return (
     <header className="bg-gray-800 text-white py-2 px-4">
       <div className="flex justify-between items-center">
