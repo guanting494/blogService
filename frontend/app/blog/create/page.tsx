@@ -13,7 +13,7 @@ export default function CreateBlogPostPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const { authToken } = useAuth(); // Get auth token
+  const { authToken, username } = useAuth(); // Get auth token
 
   const handleFormSubmit = async (data: BlogPostFormData) => {
     setIsLoading(true);
@@ -44,6 +44,7 @@ export default function CreateBlogPostPage() {
         isLoading={isLoading}
         error={error}
         buttonText="Create Post"
+        currentUser={username || 'Anonymous'}
       />
     </div>
   );

@@ -1,18 +1,19 @@
-// frontend/app/blog/[id]/edit/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, notFound } from 'next/navigation';
+import { useRouter, notFound, useParams } from 'next/navigation';
 import Link from 'next/link';
-import BlogPostForm from '@/app/components/blog/BlogPostForm'; // Import reusable form
-import { fetchBlogPost, updateBlogPost } from '@/app/lib/blogApi'; // Import API functions
-import { BlogPost, BlogPostFormData } from '@/app/lib/blogTypes'; // Import types
-import { useAuth } from '@/app/hooks/useAuth'; // Assuming useAuth provides current user/token
+import BlogPostForm from '@/app/components/blog/BlogPostForm';
+import { fetchBlogPost, updateBlogPost } from '@/app/lib/blogApi';
+import { BlogPost, BlogPostFormData } from '@/app/lib/blogTypes';
+import { useAuth } from '@/app/hooks/useAuth';
 
-export default function EditBlogPostPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default function EditBlogPostPage() {
+  const params = useParams();
+  const id = params.id as string; // Explicitly cast id to string
+
   const router = useRouter();
-  const { authToken } = useAuth(); // Get auth token
+  const { authToken, username } = useAuth(); // Get auth token
 
   const [initialData, setInitialData] = useState<BlogPostFormData | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
@@ -74,6 +75,7 @@ export default function EditBlogPostPage({ params }: { params: { id: string } })
           isLoading={isLoading}
           error={error}
           buttonText="Update Post"
+          currentUser={username || 'Anonymous'}
         />
       )}
     </div>

@@ -9,9 +9,10 @@ interface BlogPostFormProps {
   isLoading: boolean;
   error: string | null;
   buttonText: string;
+  currentUser: string;
 }
 
-export default function BlogPostForm({ initialData, onSubmit, isLoading, error, buttonText }: BlogPostFormProps) {
+export default function BlogPostForm({ initialData, onSubmit, isLoading, error, buttonText, currentUser}: BlogPostFormProps) {
   const [title, setTitle] = useState(initialData?.title || '');
   const [content, setContent] = useState(initialData?.content || '');
   const [author, setAuthor] = useState(initialData?.author || '');
@@ -58,16 +59,15 @@ export default function BlogPostForm({ initialData, onSubmit, isLoading, error, 
         />
       </div>
       <div>
-        <label htmlFor="author" className="block text-gray-700 text-sm font-bold mb-2">
-          Author:
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Author
         </label>
         <input
           type="text"
-          id="author"
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
-          required
+          value={currentUser}
+          disabled
+          className="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-gray-600"
+          readOnly
         />
       </div>
       <div>
