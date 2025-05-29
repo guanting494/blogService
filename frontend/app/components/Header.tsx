@@ -4,10 +4,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/hooks/useAuth';
 
+
+
+
+
 export default function Header() {
   const router = useRouter();
-  const { isAuthenticated, logout } = useAuth();
-
+  const { isAuthenticated, username, logout } = useAuth();
+  console.log('Header rendered:', { isAuthenticated, username });
   return (
     <header className="bg-gray-800 text-white py-2 px-4">
       <div className="flex justify-between items-center">
@@ -19,12 +23,21 @@ export default function Header() {
 
         <div className="flex items-center gap-2">
           {isAuthenticated ? (
-            <button
-              className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded"
-              onClick={logout}
-            >
-              Logout
-            </button>
+            <>
+              <span className="text-sm">Welcome, {username}!</span>
+              <Link href="/" className="text-sm hover:underline">
+                Blog
+              </Link>
+              <Link href="/" className="text-sm hover:underline">
+                Profile
+              </Link>
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded"
+                onClick={logout}
+              >
+                Logout
+              </button>
+            </>
           ) : (
             <>
               <button

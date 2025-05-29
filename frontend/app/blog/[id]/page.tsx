@@ -1,21 +1,44 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { useParams, notFound } from 'next/navigation';
 import { fetchBlogPost } from '@/app/lib/blogApi';
 import { BlogPost } from '@/app/lib/blogTypes';
 import BlogPostActions from '@/app/components/blog/BlogPostActions';
 
+export default function BlogPostDetailPage() {
+  const params = useParams();
+  const id = params.id as string;
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [loading, setLoading] = useState(true);
 
-export default async function BlogPostDetailPage({ params }: PageProps) {
-  const post: BlogPost | null = await fetchBlogPost(params.id);
+  useEffect(() => {
+    async function loadPost() {
+      try {
+        const fetchedPost = await fetchBlogPost(id);
+        if (!fetchedPost) {
+          notFound(); // Redirect to 404 if post not found
+        } else {
+          setPost(fetchedPost);
+        }
+      } catch (error) {
+        console.error('Error fetching blog post:', error);
+        notFound(); // Redirect to 404 on error
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadPost();
+  }, [id]);
+
+  if (loading) {
+    return <div className="text-center p-8">Loading...</div>;
+  }
 
   if (!post) {
-    notFound();
+    return <div className="text-center p-8">Post not found</div>;
   }
 
   return (
@@ -30,7 +53,10 @@ export default async function BlogPostDetailPage({ params }: PageProps) {
       {post.tags && post.tags.length > 0 && (
         <div className="text-center mb-6">
           {post.tags.map((tag, index) => (
-            <span key={index} className="inline-block bg-blue-100 rounded-full px-3 py-1 text-sm font-semibold text-blue-800 mr-2 mb-1">
+            <span
+              key={index}
+              className="inline-block bg-blue-100 rounded-full px-3 py-1 text-sm font-semibold text-blue-800 mr-2 mb-1"
+            >
               #{tag}
             </span>
           ))}
