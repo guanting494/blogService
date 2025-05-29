@@ -61,6 +61,7 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
@@ -84,26 +85,33 @@ ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
 ACCOUNT_ADAPTER = 'allauth.account.adapter.DefaultAccountAdapter'
 
 # OAuth settings
-SOCIALACCOUNT_ADAPTER = 'allauth.socialaccount.adapter.DefaultSocialAccountAdapter'
+GITHUB_CLIENT_ID = 'Ov23liU7LUflMX0TfTsN' 
+GITHUB_CLIENT_SECRET = '7b9607a07ec854923bfd5c3908bb1d3df9cdb85d'  
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    # 添加其他允许的域名
+]
+# SOCIALACCOUNT_ADAPTER = 'allauth.socialaccount.adapter.DefaultSocialAccountAdapter'
 
 
-REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'dj_rest_auth.registration.serializers.RegisterSerializer',
-}
+# REST_AUTH_REGISTER_SERIALIZERS = {
+#     'REGISTER_SERIALIZER': 'dj_rest_auth.registration.serializers.RegisterSerializer',
+# }
 
-SOCIALACCOUNT_STORE_TOKENS = True
-LOGIN_REDIRECT_URL = "http://localhost:3000/" # 默认登录后跳转
-ACCOUNT_LOGOUT_REDIRECT_URL = "http://localhost:3000/" # 默认登出后跳转
-SOCIALACCOUNT_PROVIDERS = {
-    'github': {
-        'APP': {
-            'client_id': 'Ov23liU7LUflMX0TfTsN',
-            'secret': '7b9607a07ec854923bfd5c3908bb1d3df9cdb85d',
-            # 'key': ''
-        },
-        'SCOPE': ['user:email', 'read:user'],
-    }
-}
+# SOCIALACCOUNT_STORE_TOKENS = True
+# LOGIN_REDIRECT_URL = "http://localhost:3000/" # 默认登录后跳转
+# ACCOUNT_LOGOUT_REDIRECT_URL = "http://localhost:3000/" # 默认登出后跳转
+# SOCIALACCOUNT_PROVIDERS = {
+#     'github': {
+#         'APP': {
+#             'client_id': 'Ov23liU7LUflMX0TfTsN',
+#             'secret': '7b9607a07ec854923bfd5c3908bb1d3df9cdb85d',
+#             # 'key': ''
+#         },
+#         'SCOPE': ['user:email', 'read:user'],
+#     }
+# }
 
 
 MIDDLEWARE = [
