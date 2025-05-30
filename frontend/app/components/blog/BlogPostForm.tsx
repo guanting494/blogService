@@ -33,7 +33,13 @@ export default function BlogPostForm({ initialData, onSubmit, isLoading, error, 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const formattedTags = tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
-    onSubmit({ title, content, author, summary, tags: formattedTags });
+    onSubmit({
+      title,
+      content,
+      author: currentUser,
+      summary,
+      tags: formattedTags
+    });
   };
 
   return (
