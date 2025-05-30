@@ -8,11 +8,17 @@ import Link from 'next/link';
 export default function LoginPage() {
   const { isAuthenticated, message, error } = useAuth();
   const GITHUB_CLIENT_ID = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
-  const GITHUB_CALLBACK_URL = process.env.NEXT_PUBLIC_GITHUB_CALLBACK_URL || 'http://localhost:3000/user/github/callback';
+  const GITHUB_CALLBACK_URL = process.env.NEXT_PUBLIC_GITHUB_CALLBACK_URL;
 
-  const GITHUB_AUTH_URL = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${GITHUB_CALLBACK_URL}&scope=user:email`;
+  if (!GITHUB_CLIENT_ID || !GITHUB_CALLBACK_URL) {
+    console.error('GitHub OAuth environment variables are not set properly');
+  }
 
   const handleGitHubLogin = () => {
+    if (!GITHUB_CLIENT_ID || !GITHUB_CALLBACK_URL) {
+      console.error('GitHub OAuth environment variables are not set properly');
+      return;
+    }
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&redirect_uri=${GITHUB_CALLBACK_URL}&scope=user:email`;
     window.location.href = githubAuthUrl;
   };

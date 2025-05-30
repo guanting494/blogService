@@ -11,21 +11,25 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from .env file
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-n!xb@p5&69zmaf$gf$n@1o_qwtvz6$wr4%#r__+7pw09qb&lm@'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 
 # Application definition
@@ -85,37 +89,14 @@ ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
 ACCOUNT_ADAPTER = 'allauth.account.adapter.DefaultAccountAdapter'
 
 # OAuth settings
-GITHUB_CLIENT_ID = 'Ov23liU7LUflMX0TfTsN' 
-GITHUB_CLIENT_SECRET = '7b9607a07ec854923bfd5c3908bb1d3df9cdb85d'  
+GITHUB_CLIENT_ID = os.getenv('GITHUB_CLIENT_ID')
+GITHUB_CLIENT_SECRET = os.getenv('GITHUB_CLIENT_SECRET')
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    # 添加其他允许的域名
-]
-# SOCIALACCOUNT_ADAPTER = 'allauth.socialaccount.adapter.DefaultSocialAccountAdapter'
-
-
-# REST_AUTH_REGISTER_SERIALIZERS = {
-#     'REGISTER_SERIALIZER': 'dj_rest_auth.registration.serializers.RegisterSerializer',
-# }
-
-# SOCIALACCOUNT_STORE_TOKENS = True
-# LOGIN_REDIRECT_URL = "http://localhost:3000/" # 默认登录后跳转
-# ACCOUNT_LOGOUT_REDIRECT_URL = "http://localhost:3000/" # 默认登出后跳转
-# SOCIALACCOUNT_PROVIDERS = {
-#     'github': {
-#         'APP': {
-#             'client_id': 'Ov23liU7LUflMX0TfTsN',
-#             'secret': '7b9607a07ec854923bfd5c3908bb1d3df9cdb85d',
-#             # 'key': ''
-#         },
-#         'SCOPE': ['user:email', 'read:user'],
-#     }
-# }
+CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
 
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware', #跨域用的
+    'corsheaders.middleware.CorsMiddleware', 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -128,7 +109,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True # 跨域用的
+CORS_ALLOW_ALL_ORIGINS = True 
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
