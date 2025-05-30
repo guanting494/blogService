@@ -69,25 +69,26 @@ export const useAuth = (): AuthState => {
     clearMessages();
     try {
       const data = await githubSocialLogin(code);
-      const token = data.key || data.access;
-      // TODO： need to ajust the response structure based on backend implementation
-      const usernameFromResponse = data.user?.username || data.username || 'GitHub用户';
-
-      if (token) {
-        setAuthToken(token);
-        localStorage.setItem('authToken', token);
-        localStorage.setItem('authUsername', usernameFromResponse); 
+      console.log('GitHub login response:', data);
+      if (data.key) {
+        localStorage.setItem('authToken', data.key);
+        if (data.user?.username) {
+          localStorage.setItem('authUsername', data.user.username);
+          setUsername(data.user.username);
+        }
+        setAuthToken(data.key);
         setIsAuthenticated(true);
-        setUsername(usernameFromResponse);
-        setMessage('GitHub login successful!');
+        setMessage('Successfully logged in with GitHub!');
+        router.push('/');
       } else {
-        setError('GitHub login failed! unauthorized');
+        throw new Error('No authentication token received');
       }
     } catch (err: any) {
-      setError(`GitHub login faild: ${err.message || 'unknown error'}`);
       console.error('GitHub login error:', err);
+      setError(err.message || 'Failed to login with GitHub');
+      router.push('/user/login?error=' + encodeURIComponent(err.message || 'Failed to login with GitHub'));
     }
-  }, [clearMessages]);
+  }, [clearMessages, router]);
 
   const signup = useCallback(async (user: string, email: string, pass: string, passConfirm: string) => {
     clearMessages();
@@ -136,7 +137,7 @@ export const useAuth = (): AuthState => {
       localStorage.removeItem('authUsername');
       setIsAuthenticated(false);
       setUsername(null);
-      setError(`logout failed: ${err.message || 'unknown error'}, but authToken cleared.`);
+      setError(`logout failed: ${err.message || 'unknown error'}`, );
       console.error('Logout error:', err);
     }
   }, [authToken, clearMessages]);

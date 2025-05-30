@@ -1,8 +1,15 @@
 const API_BASE_URL = 'http://localhost:8000'; // backend API
 const USER_URL = `${API_BASE_URL}/users`;
 
+interface UserData {
+  username: string;
+  email: string;
+  name?: string;
+}
+
 interface LoginResponse {
   key?: string; // DRF Token Authentication
+  user?: UserData;
 }
 
 interface SignupResponse extends LoginResponse {
@@ -72,22 +79,14 @@ export const logoutUser = async (token: string): Promise<LogoutResponse> => {
   return handleApiResponse<LogoutResponse>(response);
 };
 
-// github OAuth API
-export const githubSocialLogin = async (code: string) => {
-  const response = await fetch(`${API_BASE_URL}/social/github/`, {
+// GitHub OAuth login
+export const githubSocialLogin = async (code: string): Promise<LoginResponse> => {
+  const response = await fetch(`${USER_URL}/github/callback/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ code: code }), // 将从 GitHub 获取的 code 发送给后端
+    body: JSON.stringify({ code }),
   });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.detail || errorData.non_field_errors?.[0] || 'GitHub login failed');
-  }
-
-  const data = await response.json();
-  // expecting the response to contain a token or user data like { key: 'token' }
-  return data;
+  return handleApiResponse<LoginResponse>(response);
 };
