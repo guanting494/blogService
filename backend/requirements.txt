@@ -1,3 +1,6 @@
+# requests
+Requests==2.32.3
+
 # Core Django packages
 django>=4.2
 djangorestframework
@@ -13,6 +16,7 @@ psycopg2-binary
 
 # Config & Environment
 python-decouple
+python-dotenv==1.1.0
 
 # Markdown support
 markdown
@@ -22,3 +26,9 @@ django-cors-headers
 
 # Filtering for DRF
 django-filter
+
+
+
+
+
+
