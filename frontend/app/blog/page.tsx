@@ -1,10 +1,38 @@
-import Link from 'next/link';
-import { fetchBlogPosts } from '@/app/lib/blogApi'; // Import API function
-import { BlogPost } from '@/app/lib/blogTypes'; // Import BlogPost interface
-import BlogPostCard from '@/app/components/blog/BlogPostCard'; // Import BlogPostCard component
+'use client';
 
-export default async function BlogListPage() {
-  const posts: BlogPost[] = await fetchBlogPosts();
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { fetchBlogPosts } from '@/app/lib/blogApi';
+import { BlogPost } from '@/app/lib/blogTypes';
+import BlogPostCard from '@/app/components/blog/BlogPostCard';
+
+export default function BlogListPage() {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadPosts = async () => {
+    try {
+      setLoading(true);
+      const fetchedPosts = await fetchBlogPosts();
+      setPosts(fetchedPosts);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadPosts();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto p-4 text-center">
+        <div className="animate-pulse">Loading blog posts...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-4">

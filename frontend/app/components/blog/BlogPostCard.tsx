@@ -1,4 +1,3 @@
-
 import Link from 'next/link';
 import { BlogPost } from '@/app/lib/blogTypes';
 
