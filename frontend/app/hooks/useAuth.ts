@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { loginUser, signupUser, logoutUser, githubSocialLogin } from '@/app/lib/userApi';
+import { useAuthContext } from '@/app/providers/AuthProvider';
+
 interface AuthState {
   authToken: string | null;
   isAuthenticated: boolean;
@@ -17,53 +19,34 @@ interface AuthState {
 }
 
 export const useAuth = (): AuthState => {
-  const [authToken, setAuthToken] = useState<string | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [username, setUsername] = useState<string | null>(null);
   const [message, setMessage] = useState<string>('');
   const [error, setError] = useState<string>('');
   const router = useRouter();
+  const { isAuthenticated, username, authToken, setAuth } = useAuthContext();
 
-  // use useCallback to avoid recreating functions on every render
   const clearMessages = useCallback(() => {
     setMessage('');
     setError('');
-  }, []);
-
-  // check if the user is authenticated based on the presence of a token
-  useEffect(() => {
-    if (typeof window !== 'undefined') { // confirm in a browser environment
-      const storedToken = localStorage.getItem('authToken');
-      const storedUsername = localStorage.getItem('authUsername');
-      if (storedToken) {
-        setAuthToken(storedToken);
-        setIsAuthenticated(true);
-        setUsername(storedUsername || null);
-        setMessage('load authToken from localStorage');
-      }
-    }
   }, []);
 
   const login = useCallback(async (user: string, pass: string) => {
     clearMessages();
     try {
       const data = await loginUser(user, pass);
-      const token = data.key; // DRF Token
+      const token = data.key;
       if (token) {
-        setAuthToken(token);
         localStorage.setItem('authToken', token);
         localStorage.setItem('authUsername', user);
-        setIsAuthenticated(true);
-        setUsername(user);
-        router.push('/'); // Redirect to the main page after login
+        setAuth(true, user, token);
+        router.push('/');
       } else {
         setError('login failed! unauthorized');
       }
     } catch (err: any) {
-      setError(`login faild: ${err.message || 'unknown error'}`);
+      setError(`login failed: ${err.message || 'unknown error'}`);
       console.error('Login error:', err);
     }
-  }, [clearMessages, router]);
+  }, [clearMessages, router, setAuth]);
 
   const loginWithGithub = useCallback(async (code: string) => {
     clearMessages();
@@ -74,10 +57,8 @@ export const useAuth = (): AuthState => {
         localStorage.setItem('authToken', data.key);
         if (data.user?.username) {
           localStorage.setItem('authUsername', data.user.username);
-          setUsername(data.user.username);
+          setAuth(true, data.user.username, data.key);
         }
-        setAuthToken(data.key);
-        setIsAuthenticated(true);
         setMessage('Successfully logged in with GitHub!');
         router.push('/');
       } else {
@@ -88,7 +69,7 @@ export const useAuth = (): AuthState => {
       setError(err.message || 'Failed to login with GitHub');
       router.push('/user/login?error=' + encodeURIComponent(err.message || 'Failed to login with GitHub'));
     }
-  }, [clearMessages, router]);
+  }, [clearMessages, router, setAuth]);
 
   const signup = useCallback(async (user: string, email: string, pass: string, passConfirm: string) => {
     clearMessages();
@@ -96,11 +77,9 @@ export const useAuth = (): AuthState => {
       const data = await signupUser(user, email, pass, passConfirm);
       const token = data.key;
       if (token) {
-        setAuthToken(token);
         localStorage.setItem('authToken', token);
         localStorage.setItem('authUsername', user);
-        setIsAuthenticated(true);
-        setUsername(user);
+        setAuth(true, user, token);
         setMessage('signup and login successful!');
       } else {
         setError('signup failed! unauthorized');
@@ -109,38 +88,26 @@ export const useAuth = (): AuthState => {
       setError(`signup failed: ${err.message || 'unknown error'}`);
       console.error('Signup error:', err);
     }
-  }, [clearMessages]);
+  }, [clearMessages, setAuth]);
 
   const logout = useCallback(async () => {
     clearMessages();
-    if (!authToken) {
-      setAuthToken(null);
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('authUsername');
-      setIsAuthenticated(false);
-      setUsername(null);
-      setMessage('logout successful, but no authToken found.');
-      return;
-    }
     try {
-      const data = await logoutUser(authToken);
-      setAuthToken(null);
+      if (authToken) {
+        await logoutUser(authToken);
+      }
       localStorage.removeItem('authToken');
       localStorage.removeItem('authUsername');
-      setIsAuthenticated(false);
-      setUsername(null);
-      setMessage(data.detail || 'logout successful');
+      setAuth(false, null, null);
+      setMessage('logout successful');
     } catch (err: any) {
-      // even if the backend returns an error (like 401),
-      setAuthToken(null);
+      console.error('Logout error:', err);
       localStorage.removeItem('authToken');
       localStorage.removeItem('authUsername');
-      setIsAuthenticated(false);
-      setUsername(null);
-      setError(`logout failed: ${err.message || 'unknown error'}`, );
-      console.error('Logout error:', err);
+      setAuth(false, null, null);
+      setError(`logout failed: ${err.message || 'unknown error'}`);
     }
-  }, [authToken, clearMessages]);
+  }, [authToken, clearMessages, setAuth]);
 
   return {
     authToken,
