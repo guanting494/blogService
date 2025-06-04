@@ -10,7 +10,7 @@ class UserManager(BaseUserManager):
         if password:
             user.set_password(password)
         else:
-            user.set_unusable_password()  # 为OAuth用户设置不可用密码
+            user.set_unusable_password()
         user.save(using=self._db)
         return user
 

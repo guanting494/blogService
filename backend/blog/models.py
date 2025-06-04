@@ -6,8 +6,8 @@ class BlogPost(models.Model):
     content = models.TextField()
     summary = models.TextField(blank=True)
     author = models.ForeignKey(
-        settings.AUTH_USER_MODEL, # This refers to the user model defined in settings
-        on_delete=models.CASCADE,  # Ensures that if the user is deleted, their posts are also deleted
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
         related_name='blog_posts'
     )
     published_date = models.DateTimeField(auto_now_add=True)

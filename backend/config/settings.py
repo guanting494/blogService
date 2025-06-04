@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     # my app
     'users',
     'blog',
+    'comments',
 ]
 
 # authentication settings
