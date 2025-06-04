@@ -9,7 +9,7 @@ import BlogPostActions from '@/app/components/blog/BlogPostActions';
 
 export default function BlogPostDetailPage() {
   const params = useParams();
-  const id = params.id as string;
+  const id = params?.id as string;
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -62,7 +62,7 @@ export default function BlogPostDetailPage() {
         </div>
       )}
       <div className="prose lg:prose-lg mx-auto mb-8">
-        <p>{post.content}</p>
+        <p className="whitespace-pre-wrap">{post.content}</p>
       </div>
 
       <BlogPostActions postId={post.id} authorName={post.author} />
