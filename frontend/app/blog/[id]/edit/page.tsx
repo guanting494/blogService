@@ -10,7 +10,7 @@ import { useAuth } from '@/app/hooks/useAuth';
 
 export default function EditBlogPostPage() {
   const params = useParams();
-  const id = params.id as string;
+  const id = params?.id as string;
 
   const router = useRouter();
   const { authToken, username } = useAuth(); // Get auth token
