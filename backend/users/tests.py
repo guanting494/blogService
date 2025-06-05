@@ -128,8 +128,3 @@ class AuthAPITestCase(APITestCase):
         self.assertEqual(logout_response.status_code, status.HTTP_200_OK)
         self.assertIn('detail', logout_response.data)
         self.assertEqual(logout_response.data['detail'], 'Successfully logged out.')
-
-        # verify that the key is no longer valid
-        # todo: need to check if the user is logged out
-        # response_after_logout = self.client.get(reverse('user_details')) # 假设有一个用户详情接口
-        # self.assertEqual(response_after_logout.status_code, status.HTTP_401_UNAUTHORIZED)

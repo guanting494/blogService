@@ -3,7 +3,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework import permissions
-from rest_framework.authentication import TokenAuthentication
 from django.shortcuts import get_object_or_404
 from .models import BlogPost
 from .serializers import BlogPostSerializer
@@ -19,7 +18,6 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
         return obj.author == request.user
 
 class BlogPostListView(APIView):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request):
@@ -41,7 +39,6 @@ class BlogPostListView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class BlogPostDetailView(APIView):
-    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
 
     def get_object(self, pk):

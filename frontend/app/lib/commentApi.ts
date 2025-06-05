@@ -34,7 +34,6 @@ export const createComment = async (data: CreateCommentData, authToken?: string)
   if (!authToken) {
     throw new Error('Authentication required');
   }
-
   const response = await fetch(`${COMMENT_URL}/`, {
     method: 'POST',
     headers: {

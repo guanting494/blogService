@@ -67,7 +67,7 @@ export default function BlogPostDetailPage() {
           <p className="whitespace-pre-wrap">{post.content}</p>
         </div>
       </div>
-
+      <BlogPostActions postId={post.id} authorName={post.author} />
       <div className="bg-white rounded-lg shadow-md p-6">
         <div className="w-full">
           <CommentSection postId={post.id} postAuthor={post.author} />
