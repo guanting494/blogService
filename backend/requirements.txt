@@ -27,7 +27,8 @@ django-cors-headers
 # Filtering for DRF
 django-filter
 
-
+# prevent XSS attacks
+bleach
 
 
 

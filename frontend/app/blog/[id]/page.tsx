@@ -1,12 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import Link from 'next/link';
 import { useParams, notFound } from 'next/navigation';
 import { fetchBlogPost } from '@/app/lib/blogApi';
 import { BlogPost } from '@/app/lib/blogTypes';
 import BlogPostActions from '@/app/components/blog/BlogPostActions';
 import CommentSection from '@/app/components/comments/CommentSection';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
+import 'highlight.js/styles/github.css';
+import DOMPurify from 'dompurify';
+import '@/app/markdown.css';
 
 export default function BlogPostDetailPage() {
   const params = useParams();
@@ -64,7 +70,7 @@ export default function BlogPostDetailPage() {
           </div>
         )}
         <div className="prose lg:prose-lg mx-auto mb-8">
-          <p className="whitespace-pre-wrap">{post.content}</p>
+          <MarkdownSafeHtml content={post.content} />
         </div>
       </div>
       <BlogPostActions postId={post.id} authorName={post.author} />
@@ -75,4 +81,23 @@ export default function BlogPostDetailPage() {
       </div>
     </div>
   );
+}
+
+// MarkdownSafeHtml 组件
+function MarkdownSafeHtml({ content }: { content: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    if (ref.current) {
+      const rawHtml = (
+        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeHighlight]}>{content}</ReactMarkdown>
+      );
+      const temp = document.createElement('div');
+      // @ts-ignore
+      import('react-dom/server').then((server) => {
+        temp.innerHTML = server.renderToStaticMarkup(rawHtml);
+        ref.current!.innerHTML = DOMPurify.sanitize(temp.innerHTML);
+      });
+    }
+  }, [content]);
+  return <div ref={ref}></div>;
 }

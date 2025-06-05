@@ -9,6 +9,7 @@ export interface BlogPost {
   summary: string;
   tags: string[];
   content: string;
+  content_html?: string; // Added for type-safe access to the backend's HTML field
 }
 
 /**

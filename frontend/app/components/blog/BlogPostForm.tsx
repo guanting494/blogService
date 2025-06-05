@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { BlogPostFormData } from '@/app/lib/blogTypes';
+import MarkdownEditorWithPreview from './MarkdownEditorWithPreview';
 
 interface BlogPostFormProps {
   initialData?: BlogPostFormData; // Optional initial data for editing
@@ -18,6 +19,7 @@ export default function BlogPostForm({ initialData, onSubmit, isLoading, error, 
   const [author, setAuthor] = useState(initialData?.author || '');
   const [summary, setSummary] = useState(initialData?.summary || '');
   const [tags, setTags] = useState(initialData?.tags ? initialData.tags.join(', ') : '');
+  const [docType, setDocType] = useState<'plain' | 'markdown'>('plain');
 
   // Update form fields if initialData changes (e.g., when loading data for edit)
   useEffect(() => {
@@ -108,18 +110,39 @@ export default function BlogPostForm({ initialData, onSubmit, isLoading, error, 
           placeholder="e.g. programming, react, django"
         />
       </div>
+      <div className="flex gap-4 items-center">
+        <span className="text-gray-700 font-bold">DocumentType</span>
+        <button
+          type="button"
+          className={`px-3 py-1 rounded ${docType === 'plain' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+          onClick={() => setDocType('plain')}
+        >
+          Plain
+        </button>
+        <button
+          type="button"
+          className={`px-3 py-1 rounded ${docType === 'markdown' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+          onClick={() => setDocType('markdown')}
+        >
+          Markdown
+        </button>
+      </div>
       <div>
         <label htmlFor="content" className="block text-gray-700 text-sm font-bold mb-2">
           Content:
         </label>
-        <textarea
-          id="content"
-          rows={10}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          required
-        ></textarea>
+        {docType === 'markdown' ? (
+          <MarkdownEditorWithPreview value={content} onChange={setContent} />
+        ) : (
+          <textarea
+            id="content"
+            rows={10}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            required
+          ></textarea>
+        )}
       </div>
       <div className="flex items-center justify-between">
         <button
