@@ -31,6 +31,11 @@ export default function CommentForm({
       return;
     }
 
+    if (content.length > 200) {
+      setError('Comment cannot exceed 200 characters');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       setError(null);
@@ -53,15 +58,26 @@ export default function CommentForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
+      <div className="relative">
         <textarea
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => {
+            if (e.target.value.length <= 200) {
+              setContent(e.target.value);
+              setError(null);
+            } else {
+              setError('Comment cannot exceed 200 characters');
+            }
+          }}
           placeholder="Write your comment here..."
           rows={3}
+          maxLength={200}
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           disabled={isSubmitting}
         />
+        <div className="absolute bottom-2 right-2 text-sm text-gray-500">
+          {content.length}/200
+        </div>
       </div>
       {error && (
         <div className="text-red-500 text-sm">{error}</div>

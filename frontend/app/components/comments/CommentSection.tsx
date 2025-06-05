@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Comment, fetchComments, createComment, updateComment, deleteComment } from '@/app/lib/commentApi';
 import CommentForm from './CommentForm';
 import CommentItem from './CommentItem';
+import Pagination from './Pagination';
 import { useAuth } from '@/app/hooks/useAuth';
 
 interface CommentSectionProps {
@@ -13,7 +14,19 @@ export default function CommentSection({ postId, postAuthor }: CommentSectionPro
   const [comments, setComments] = useState<Comment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const commentsPerPage = 5;
   const { authToken } = useAuth();
+
+  // Calculate total pages
+  const totalPages = Math.ceil(comments.length / commentsPerPage);
+
+  // Get current page's comments
+  const getCurrentPageComments = () => {
+    const startIndex = (currentPage - 1) * commentsPerPage;
+    const endIndex = startIndex + commentsPerPage;
+    return comments.slice(startIndex, endIndex);
+  };
 
   const loadComments = async () => {
     try {
@@ -32,6 +45,11 @@ export default function CommentSection({ postId, postAuthor }: CommentSectionPro
   useEffect(() => {
     loadComments();
   }, [postId]);
+
+  // Reset to first page when comments change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [comments.length]);
 
   const handleCreateComment = async (content: string) => {
     try {
@@ -64,6 +82,12 @@ export default function CommentSection({ postId, postAuthor }: CommentSectionPro
     }
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to comments section smoothly
+    document.getElementById('comments-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   if (isLoading) {
     return <div className="text-center p-4">Loading comments...</div>;
   }
@@ -83,25 +107,35 @@ export default function CommentSection({ postId, postAuthor }: CommentSectionPro
   }
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Comments</h2>
+    <div className="space-y-6" id="comments-section">
+      <h2 className="text-2xl font-bold">Comments ({comments.length})</h2>
+      
       <CommentForm 
         postId={postId}
         onSubmit={handleCreateComment}
       />
+      
       <div className="space-y-4">
         {comments.length === 0 ? (
           <p className="text-gray-500 text-center">No comments yet. Be the first to comment!</p>
         ) : (
-          comments.map(comment => (
-            <CommentItem
-              key={comment.id}
-              comment={comment}
-              postAuthor={postAuthor}
-              onEdit={handleEditComment}
-              onDelete={handleDeleteComment}
+          <>
+            {getCurrentPageComments().map(comment => (
+              <CommentItem
+                key={comment.id}
+                comment={comment}
+                postAuthor={postAuthor}
+                onEdit={handleEditComment}
+                onDelete={handleDeleteComment}
+              />
+            ))}
+
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
             />
-          ))
+          </>
         )}
       </div>
     </div>
