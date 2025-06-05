@@ -24,7 +24,7 @@ class BlogPostSerializer(serializers.ModelSerializer):
     def get_content_html(self, obj):
         html = md.markdown(obj.content)
         # 只允许常见安全标签和属性
-        allowed_tags = bleach.sanitizer.ALLOWED_TAGS + [
+        allowed_tags = list(bleach.sanitizer.ALLOWED_TAGS) + [
             'p', 'pre', 'code', 'hr', 'br', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'blockquote', 'strong', 'em', 'a', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td'
         ]
         allowed_attributes = {
